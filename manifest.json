@@ -1,0 +1,14 @@
+{
+    "name": "Magayana",
+    "version": "1.0.0",
+    "description": "A better way to navigate your browsing journey",
+    "manifest_version": 3,
+    "author": "Aiden Gunathilaka",
+    "permissions": [
+        "tabs"
+    ],
+    "action":{
+        "default_popup": "index.html",
+        "default_title": "Home"
+    }
+}
