@@ -12,7 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     `<li>${tabs[i].title}: ${tabs[i].url}</li>`
                 )
             }
-            document.getElementById('saved').innerText = urlArray.toString();
+
+            chrome.storage.sync.set({"savedLinks": urlArray}, function() {});
         });
     });
 })
+
+// This command shows what was saved to sync data 
+// Cause Google doesn't want to let you do it in extensions??
+// chrome.storage.sync.get(null, function (data) { console.info(data) });
