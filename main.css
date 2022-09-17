@@ -1,0 +1,67 @@
+body {
+    height: 400px;
+    width: 300px;
+    background-color: #white;
+    color: black;
+}
+
+.title h1 {
+    text-align: center;
+}
+
+.title h3 {
+    text-align: center;
+}
+
+.action {
+    text-align: center;
+}
+
+.addTabs {
+  align-items: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  cursor: pointer;
+  display: inline-flex;
+  fill: #000;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  min-width: 140px;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.addTabs:focus {
+  color: #171e29;
+}
+
+.addTabs:hover {
+  border-color: #06f;
+  color: #06f;
+  fill: #06f;
+}
+
+.addTabs:active {
+  border-color: #06f;
+  color: #06f;
+  fill: #06f;
+}
+
+@media (min-width: 768px) {
+  .addTabs {
+    min-width: 170px;
+  }
+}
