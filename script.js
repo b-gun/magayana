@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
             for (let i = 0; i < tabs.length; i++) {
                 urlArray.push(
-                    `<li>${tabs[i].title}: ${tabs[i].url}</li>`
+                    `${tabs[i].title}: ${tabs[i].url}`
                 )
             }
 
@@ -19,5 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 
 // This command shows what was saved to sync data 
-// Cause Google doesn't want to let you do it in extensions??
+// Cause Google doesn't want to let you log it in the inspect tool it in extensions??
 // chrome.storage.sync.get(null, function (data) { console.info(data) });
+// This command lets you clear the sync storage
+// chrome.storage.local.clear()
