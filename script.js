@@ -1,20 +1,24 @@
 // Notes
+// Bug: Have to click 'Add Tabs' twice to save the data?
 
-urlArray = [];
+let urlArray = [];
 
 document.addEventListener('DOMContentLoaded', function() {
-    var button = document.getElementById('add');
-
-    button.addEventListener('click', function() {
+    const addTabs = document.getElementById('add');
+    
+    addTabs.addEventListener('click', function() {
+        const journeyName = document.getElementById('journeyName').value;
+        // Get all Tabs for Current Window
         chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
             for (let i = 0; i < tabs.length; i++) {
-                urlArray.push(
-                    `${tabs[i].title}: ${tabs[i].url}`
-                )
+                urlArray.push(`${tabs[i].title}: ${tabs[i].url}`);
             }
-
-            chrome.storage.sync.set({"savedLinks": urlArray}, function() {});
         });
+
+        const journeyObject = {}
+        journeyObject[document.getElementById('journeyName').value] = urlArray
+
+        chrome.storage.sync.set(journeyObject);
     });
 })
 
@@ -22,4 +26,4 @@ document.addEventListener('DOMContentLoaded', function() {
 // Cause Google doesn't want to let you log it in the inspect tool it in extensions??
 // chrome.storage.sync.get(null, function (data) { console.info(data) });
 // This command lets you clear the sync storage
-// chrome.storage.local.clear()
+// chrome.storage.sync.clear()
