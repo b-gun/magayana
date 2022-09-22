@@ -10,7 +10,9 @@ body {
     border-color: white;
     border-width: 3px;
     min-height: 395px;
+    max-height: 395px;
     text-align: : center;
+    overflow: hidden;
 }
 
 .title h1 {
@@ -89,4 +91,15 @@ body {
     border-color: white;
     border-width: 3px;
     min-height: 170px;
+    max-height: 170px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.journey {
+    margin-left: 7.5px;
+    margin-top: 10px;
+    width: 230px;
+    min-height: 10px;
+    text-align: center;
 }

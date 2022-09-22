@@ -1,29 +1,62 @@
 // Notes
-// Bug: Have to click 'Add Tabs' twice to save the data?
 
+// Using IndexedDB (Not Finished)
 let urlArray = [];
 
 document.addEventListener('DOMContentLoaded', function() {
     const addTabs = document.getElementById('add');
-    
+
     addTabs.addEventListener('click', function() {
         const journeyName = document.getElementById('journeyName').value;
-        // Get all Tabs for Current Window
-        chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
-            for (let i = 0; i < tabs.length; i++) {
-                urlArray.push(`${tabs[i].title}: ${tabs[i].url}`);
+        let openRequest = indexedDB.open("magayana", 1);
+
+        openRequest.onupgradeneeded = function() {
+            let db = openRequest.result;
+            if (!db.objectStoreNames.contains(journeyName)) { 
+                db.createObjectStore(journeyName, {keyPath: 'id'}); 
             }
-        });
+        };
 
-        const journeyObject = {}
-        journeyObject[document.getElementById('journeyName').value] = urlArray
+        openRequest.onsuccess = function() {
+            let db = openRequest.result;
+            
+            chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
+                let transaction = db.transaction(journeyName, "readwrite");
+                
+                
+                for (let i = 0; i < tabs.length; i++) {
+                    let links = transaction.objectStore(journeyName);
 
-        chrome.storage.sync.set(journeyObject);
+                    let request = links.add({
+                        id: i,
+                        name: tabs[i].title,
+                        link: tabs[i].url
+                    });
+
+                    request.onsuccess = function() {
+                        console.log("Link succesfully added to store.")
+                    }
+
+                    request.onerror = function() {
+                        console.log("There was an error", request.error)
+                    }
+                }
+            });
+        }
+
+        //TODO
+        // Pull all from object store and populate list in extension window.
+        // Restore all tabs from a 'journey' in extension window.
+
     });
 })
 
-// This command shows what was saved to sync data 
-// Cause Google doesn't want to let you log it in the inspect tool it in extensions??
-// chrome.storage.sync.get(null, function (data) { console.info(data) });
-// This command lets you clear the sync storage
-// chrome.storage.sync.clear()
+// Data Structure should look something like this 
+// const links = {
+//     "AI": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
+//         'https://mail.google.com/mail/u/0/#inbox'],
+//     "Mechanical Keyboards": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
+//         'https://mail.google.com/mail/u/0/#inbox'],
+//     "Something Else": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
+//         'https://mail.google.com/mail/u/0/#inbox']
+// };
