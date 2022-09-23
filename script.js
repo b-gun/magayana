@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         openRequest.onupgradeneeded = function() {
             let db = openRequest.result;
-            if (!db.objectStoreNames.contains(journeyName)) { 
-                db.createObjectStore(journeyName, {keyPath: 'id'}); 
+
+            if (!db.objectStoreNames.contains("sites")) { 
+                db.createObjectStore("sites", {autoIncrement: true}); 
             }
         };
 
@@ -21,14 +22,13 @@ document.addEventListener('DOMContentLoaded', function() {
             let db = openRequest.result;
             
             chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
-                let transaction = db.transaction(journeyName, "readwrite");
-                
-                
+                let transaction = db.transaction("sites", "readwrite");
+                          
                 for (let i = 0; i < tabs.length; i++) {
-                    let links = transaction.objectStore(journeyName);
+                    let links = transaction.objectStore("sites");
 
                     let request = links.add({
-                        id: i,
+                        journeyName: journeyName,
                         name: tabs[i].title,
                         link: tabs[i].url
                     });
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         //TODO
         // Pull all from object store and populate list in extension window.
+
         // Restore all tabs from a 'journey' in extension window.
 
     });
