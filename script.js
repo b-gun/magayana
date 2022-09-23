@@ -1,6 +1,14 @@
-// Notes
+//TODO
+// Pull all from object store and populate list in extension window.
+    //  Journey Div gets populated with names
+    //  - Need to remove all divs from journey before re-populating.
+    //  - (Bug) The most recent 'journey' doesn't show up in the list when saved.
 
-// Using IndexedDB (Not Finished)
+// Restore all tabs from a 'journey' in extension window.
+    // Add links to each element in journey div.
+    // On click -> Open links in new window.
+
+        
 let urlArray = [];
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,22 +50,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+
+            let transaction = db.transaction("sites", "readonly");
+            let siteObject = transaction.objectStore("sites");
+            let sites = siteObject.getAll();
+
+            sites.onsuccess = function(event) {
+                linkArray = sites.result;
+                let journeyNamesArray = linkArray.map(x => x.journeyName);
+                journeyNamesArray = [...new Set(journeyNamesArray)];
+
+                journeyNamesArray.forEach(x => {
+                    const div = document.createElement("div")
+                    div.className = 'journey';
+                    div.innerHTML = x;
+                    document.getElementById('saved').appendChild(div);
+                });                
+            };
         }
-
-        //TODO
-        // Pull all from object store and populate list in extension window.
-
-        // Restore all tabs from a 'journey' in extension window.
-
     });
 })
 
-// Data Structure should look something like this 
-// const links = {
-//     "AI": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
-//         'https://mail.google.com/mail/u/0/#inbox'],
-//     "Mechanical Keyboards": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
-//         'https://mail.google.com/mail/u/0/#inbox'],
-//     "Something Else": ['https://hynek.me/articles/productive-fruit-fly-programmer/',
-//         'https://mail.google.com/mail/u/0/#inbox']
-// };
+
+
+
