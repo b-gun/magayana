@@ -1,7 +1,6 @@
 //TODO
 // Pull all from object store and populate list in extension window.
     //  Journey Div gets populated with names
-    //  - Need to remove all divs from journey before re-populating.
     //  - (Bug) The most recent 'journey' doesn't show up in the list when saved.
 
 // Restore all tabs from a 'journey' in extension window.
@@ -56,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let sites = siteObject.getAll();
 
             sites.onsuccess = function(event) {
+                const saved = document.getElementById('saved');
+                saved.textContent = '';
                 linkArray = sites.result;
                 let journeyNamesArray = linkArray.map(x => x.journeyName);
                 journeyNamesArray = [...new Set(journeyNamesArray)];
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const div = document.createElement("div")
                     div.className = 'journey';
                     div.innerHTML = x;
-                    document.getElementById('saved').appendChild(div);
+                    saved.appendChild(div);
                 });                
             };
         }
