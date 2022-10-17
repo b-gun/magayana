@@ -31,27 +31,27 @@
 //         openRequest.onsuccess = function() {
 //             let db = openRequest.result;
             
-//             chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
-//                 let transaction = db.transaction("sites", "readwrite");
+            // chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
+            //     let transaction = db.transaction("sites", "readwrite");
                           
-//                 for (let i = 0; i < tabs.length; i++) {
-//                     let links = transaction.objectStore("sites");
+            //     for (let i = 0; i < tabs.length; i++) {
+            //         let links = transaction.objectStore("sites");
 
-//                     let request = links.add({
-//                         journeyName: journeyName,
-//                         name: tabs[i].title,
-//                         link: tabs[i].url
-//                     });
+            //         let request = links.add({
+            //             journeyName: journeyName,
+            //             name: tabs[i].title,
+            //             link: tabs[i].url
+            //         });
 
-//                     request.onsuccess = function() {
-//                         console.log("Link succesfully added to store.")
-//                     }
+            //         request.onsuccess = function() {
+            //             console.log("Link succesfully added to store.")
+            //         }
 
-//                     request.onerror = function() {
-//                         console.log("There was an error", request.error)
-//                     }
-//                 }
-//             });
+            //         request.onerror = function() {
+            //             console.log("There was an error", request.error)
+            //         }
+            //     }
+            // });
 
             // let transaction = db.transaction("sites", "readonly");
             // let siteObject = transaction.objectStore("sites");
@@ -87,16 +87,30 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     openRequest.onsuccess = function() {
+        const addTabs = document.getElementById('add');
         init(openRequest);
+
+        addTabs.addEventListener('click', function() {
+            const journeyName = document.getElementById('journeyName').value;
+            save(openRequest, journeyName);
+
+        });    
     };
 });
 
+// ***************
+// Functions
+// ***************
 
+// Initialize extension and show all saved journeys.
 function init(openRequest) {
+    document.getElementById('saved').innerHTML = "";
+
     let db = openRequest.result;
     let transaction = db.transaction("sites", "readonly");
     let siteObject = transaction.objectStore("sites");
     let sites = siteObject.getAll();
+
     sites.onsuccess = function(e) {
         let journeyNamesArray =  sites.result.map(x => x.journeyName);
         journeyNamesArray = [...new Set(journeyNamesArray)];
@@ -109,4 +123,30 @@ function init(openRequest) {
         });          
     } 
 }
-  
+
+// Save Tabs to a journey.
+function save(openRequest, journeyName) {
+    let db = openRequest.result;
+
+    chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
+        let transaction = db.transaction("sites", "readwrite");
+                  
+        for (let i = 0; i < tabs.length; i++) {
+            let links = transaction.objectStore("sites");
+
+            let request = links.add({
+                journeyName: journeyName,
+                name: tabs[i].title,
+                link: tabs[i].url
+            });
+
+            request.onsuccess = function() {
+                console.log("Link succesfully added to store.")
+            }
+
+            request.onerror = function() {
+                console.log("There was an error", request.error)
+            }
+        }
+    });
+}
