@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let db = openRequest.result;
 
         if (!db.objectStoreNames.contains("sites")) { 
-            db.createObjectStore("sites", {autoIncrement: true}); 
+            let magayana = db.createObjectStore("sites", {autoIncrement: true});
+            let index = magayana.createIndex("journey_idx", "journeyName");
         }
     };
 
@@ -29,29 +30,45 @@ document.addEventListener('DOMContentLoaded', function() {
             const links = document.querySelectorAll('p');
 
             for (let i = 0; i < links.length; i++) {
-                links[i].addEventListener('click', alertClick);
+                links[i].addEventListener('click', function() {
+                    openlinks(this.id, openRequest);
+                });
             }
         });
 
         addTabs.addEventListener('click', function() {
             const journeyName = document.getElementById('journeyName').value;
             save(openRequest, journeyName);
-            // chrome.windows.create({url: ['http://www.google.com', 'https://www.theage.com.au/']});             
+                      
         });  
 
     };
 });
 
-
-
 // ***************
 // Functions
 // ***************
-
-function alertClick() {
-    console.log(this.id); 
+// Retrieves & open all Links for an Journey.
+function openlinks(id, openRequest) {
+    let db = openRequest.result;
+    let transaction = db.transaction("sites", "readonly");
+    let siteObject = transaction.objectStore("sites");
+    let linkIndex = siteObject.index("journey_idx");
+    let request = linkIndex.getAll(id);
+    
+    request.onsuccess = function(e) {
+        if (request.result !== undefined) {
+            // console.log(request.result);
+            // return request.result;
+            let linkArray =  request.result.map(x => x.link);
+             chrome.windows.create({url: linkArray});  
+        } else {
+            console.log("No Links");
+        }
+    };
 }
 
+// Checks that elements have populated.
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -91,7 +108,7 @@ function init(openRequest) {
             div.innerHTML = `<p id='${x}'>${x}</p>`
             saved.appendChild(div);         
         });          
-    } 
+    }; 
 }
 
 // Save Tabs to a journey.
