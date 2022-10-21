@@ -1,14 +1,8 @@
-//TODO
-// Pull all from object store and populate list in extension window.
-    //  - (Bug) The most recent 'journey' doesn't show up in the list when saved.
+// Magayana 1.0
 
-// Restore all tabs from a 'journey' in extension window.
-    // Add links to each element in journey div.
-    // On click -> Open links in new window.
-
-// Add ability to delete a journey
-
-// After the top three are done, V1.0 is finished.
+// Notes
+// Journey is removed after clicking link.
+//  - (Bug) The most recent 'journey' doesn't show up in the list when saved.
 
 document.addEventListener('DOMContentLoaded', function() {
     let openRequest = indexedDB.open("magayana", 1);
@@ -26,20 +20,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const addTabs = document.getElementById('add');
         init(openRequest);
 
-        waitForElm('p').then((elm) => {
+        waitForElm('p').then(() => {
             const links = document.querySelectorAll('p');
 
             for (let i = 0; i < links.length; i++) {
                 links[i].addEventListener('click', function() {
                     openlinks(this.id, openRequest);
+                    
                 });
             }
         });
 
         addTabs.addEventListener('click', function() {
             const journeyName = document.getElementById('journeyName').value;
-            save(openRequest, journeyName);
-                      
+            save(openRequest, journeyName);         
         });  
 
     };
@@ -48,6 +42,23 @@ document.addEventListener('DOMContentLoaded', function() {
 // ***************
 // Functions
 // ***************
+// Deletes Items in Journey
+function deleteJourney(id, openRequest) {
+    let db = openRequest.result;
+    var transaction = db.transaction("sites", 'readwrite');
+    let siteObject = transaction.objectStore("sites");
+    let index = siteObject.index("journey_idx");
+    var request = index.openCursor(id);
+
+    request.onsuccess = function(e) {
+        let row = e.target.result;
+        if(row) {
+            row.delete();
+            row.continue();
+        }
+    }
+}
+
 // Retrieves & open all Links for an Journey.
 function openlinks(id, openRequest) {
     let db = openRequest.result;
@@ -58,10 +69,9 @@ function openlinks(id, openRequest) {
     
     request.onsuccess = function(e) {
         if (request.result !== undefined) {
-            // console.log(request.result);
-            // return request.result;
             let linkArray =  request.result.map(x => x.link);
-             chrome.windows.create({url: linkArray});  
+            chrome.windows.create({url: linkArray});
+            deleteJourney(id, openRequest);
         } else {
             console.log("No Links");
         }
