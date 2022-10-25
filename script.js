@@ -1,8 +1,15 @@
 // Magayana 1.0
 
-// Notes
-// Journey is removed after clicking link.
-//  - (Bug) The most recent 'journey' doesn't show up in the list when saved.
+// Bug Tracker
+// ************
+//  - The most recent 'journey' doesn't show up in the list when saved.
+
+// To-Do
+// ************
+// - Add Favicons
+// - Fix Bugs in Bug Tracker
+// - Brainstorm some extra features
+// - Push to Web Store?
 
 document.addEventListener('DOMContentLoaded', function() {
     let openRequest = indexedDB.open("magayana", 1);
