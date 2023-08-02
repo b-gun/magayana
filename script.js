@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!db.objectStoreNames.contains("sites")) { 
             let magayana = db.createObjectStore("sites", {autoIncrement: true});
-            let index = magayana.createIndex("journey_idx", "journeyName");
+            magayana.createIndex("journey_idx", "journeyName");
         }
     };
 
@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
         waitForElm('p').then(() => {
             const links = document.querySelectorAll('p');
 
-            for (let i = 0; i < links.length; i++) {
-                links[i].addEventListener('click', function() {
+            for (const element of links) {
+                element.addEventListener('click', function() {
                     openlinks(this.id, openRequest);
                     
                 });
@@ -52,10 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Deletes Items in Journey
 function deleteJourney(id, openRequest) {
     let db = openRequest.result;
-    var transaction = db.transaction("sites", 'readwrite');
+    let transaction = db.transaction("sites", 'readwrite');
     let siteObject = transaction.objectStore("sites");
     let index = siteObject.index("journey_idx");
-    var request = index.openCursor(id);
+    let request = index.openCursor(id);
 
     request.onsuccess = function(e) {
         let row = e.target.result;
@@ -135,13 +135,13 @@ function save(openRequest, journeyName) {
     chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, (tabs) => {
         let transaction = db.transaction("sites", "readwrite");
                   
-        for (let i = 0; i < tabs.length; i++) {
+        for (const element of tabs) {
             let links = transaction.objectStore("sites");
 
             let request = links.add({
                 journeyName: journeyName,
-                name: tabs[i].title,
-                link: tabs[i].url
+                name: element.title,
+                link: element.url
             });
 
             request.onsuccess = function() {

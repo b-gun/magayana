@@ -2,9 +2,6 @@
     "name": "Magayana",
     "version": "1.0.0",
     "description": "A better way to navigate your browsing journey",
-    "background": {
-        "service_worker": "background.js"
-    },
     "manifest_version": 3,
     "author": "Aiden Gunathilaka",
     "permissions": [
